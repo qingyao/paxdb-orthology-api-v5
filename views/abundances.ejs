@@ -1,0 +1,36 @@
+{
+    "@context": {
+        "@id": "http://api.pax-db.org/orthology-context.jsonld",
+        "orthologs": {
+            "@type": "Protein",
+            "@id": "https://string-db.org/network/",
+            "@id": "https://api.pax-db.org/protein/string/<%= proteinId %>",
+            "id": "<%= proteinId %>"
+        },
+        "abundance": {
+            "@type": "parts per million",
+            "@unit": "http://purl.obolibrary.org/obo/UO_0000169"
+        }
+    },
+    "@id": "/protein/<%= proteinId %>/ortholog_groups/<%= taxonomicLevel %>/<%= tissue %>",
+    "@type": "OrthologGroups",
+    "orthologs": [<% for (var numLevels = results.length, i = 0; i < numLevels; i++) {
+                var result = results[i]; %>
+        {
+        "@id": "/protein/<%= result.proteinId %>/ortholog_groups/<%= taxonomicLevel%>/<%= tissue %>",
+        "@type": "Protein",
+        "id": "<%= result.proteinId %>",
+        "name": "<%= result.name %>",
+        "abundance":{
+            "value": "<%= result.abundance.value %>",
+            "position": "<%= result.abundance.position %>",
+            "_rank": "<%= result.abundance.rank %>"
+        },
+        "dataset":{
+            "filename": "<%= result.dataset.filename %>",
+            "id": "https://pax-db.org/dataset/<%= result.proteinId.split('.')[0] %>/<%= result.dataset.iid %>"
+        }
+    }<% if (i < numLevels - 1 ) { %>,<% } %><% } %>
+    ],
+    "familyTree": <%- JSON.stringify(tree) %>
+}

@@ -1,0 +1,30 @@
+{
+  "name": "paxdb-orthology-api-neo5",
+  "version": "1.0.0",
+  "description": "paxdb orthology api with neo4j v5.7",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qingyao/paxdb-orthology-api-neo5.git"
+  },
+  "keywords": [
+    "graphdb"
+  ],
+  "author": "Qingyao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qingyao/paxdb-orthology-api-neo5/issues"
+  },
+  "homepage": "https://github.com/qingyao/paxdb-orthology-api-neo5#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "neo4j-driver": "^5.8.1",
+    "serve-favicon": "^2.5.0"
+  }
+}
