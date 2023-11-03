@@ -1,0 +1,32 @@
+1: luca
+2: bacteria
+1117: cyanobacteria
+1224: proteobacteria
+1236: gammaproteobacteria
+1239: firmicutes
+2157: archaea
+2759: eukaryota
+4447: liliopsida
+4751: fungi
+4891: saccharomycetes
+5653: kinetoplastida
+5794: apicomplexa
+6656: arthropoda
+7147: diptera
+7711: chordata
+9443: primates
+9989: rodentia
+28890: euryarchaeota
+33154: opisthokonta
+33208: metazoa
+35493: streptophyta
+40674: mammalia
+68336: bacteroidetes/chlorobi group
+68525: delta/epsilon subdivisions
+91561: cetartiodactyla
+183968: thermococci
+183980: archaeoglobi
+200940: thermodesulfobacteria
+201174: actinobacteria
+203691: spirochaetes
+544448: tenericutes

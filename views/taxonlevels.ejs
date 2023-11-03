@@ -1,0 +1,20 @@
+{
+    "@context": "https://schema.org",
+    "@id": "/protein/<%= protein %>",
+    "protein": {
+        "@id" : "https://api.pax-db.org/protein/string/<%= protein %>",
+        "id": "<%= protein %>"
+    },
+    "@type": "OrthologGroups",
+    "members": [
+        <% for (var numLevels = taxonomy_level_names.length, i = 0; i < numLevels; i++) {
+        var level = taxonomy_level_names[i]; %>{
+        "@id": "/protein/<%= protein %>/ortholog_groups/<%= level.name %>",
+        "@type": "OrthologGroup",
+        "id": "http://purl.obolibrary.org/obo/NCBITaxon_<%= level.id %>",
+        "name": "<%= level.name %>"
+        }
+        <% if (i < numLevels - 1 ) { %> , <% } %>
+        <% } %>
+    ]
+}

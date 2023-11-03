@@ -1,0 +1,34 @@
+{
+    "@context": {
+        "@id":"http://api.pax-db.org/orthology-context.jsonld",
+        "tissue": {
+            "@type": "Tissue",
+            "@context": "https://www.ebi.ac.uk/ols/ontologies/",
+            "@id": "uberon|bto|po|cl|clo"
+        },
+        "orthologs": {
+            "@type": "Protein",
+            "@id": "https://string-db.org/network/"
+        }
+    },
+    "@id": "/protein/<%= proteinId %>/ortholog_groups/<%= taxonomicLevel %>",
+    "id": "<%= proteinId %>"
+    <% if (locals.tissues) { %>
+    ,"tissues": [
+    <% for ( let i = 0; i < tissues.length; i++ ) { %>
+        {"name": "<%= tissues[i] %>",
+        "id": "<%= onto_terms[i] %>"}
+        <% if (i != tissues.length-1) { %>,<% } %>
+    <% } %>
+    ]
+    <% } %>
+    <% if (locals.orthologs) { %>
+    ,"orthologs": [
+        <% for( let i=0; i< orthologs.length; i++ ) { %>
+            {"id": "<%= orthologs[i].proteinId %>",
+            "name": "<%= orthologs[i].name %>"}
+            <% if (i != orthologs.length-1) { %>,<% } %>
+        <% } %>
+    ]
+    <% } %>
+}
