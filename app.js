@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors');
+// const cors = require('cors'); //access-control-allow-origin cannot contain more than one origin (Apache cors setup)
 const path = require('path');
 const app = express();
 const favicon = require('serve-favicon');
@@ -10,7 +10,7 @@ const port = 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname,'views'));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(cors());
+// app.use(cors());
 
 app.use((req, res, next) => {
     const start = Date.now();

@@ -79,9 +79,9 @@ router.get('/:protein_id/ortholog_groups/', (req, res) => {
 }) 
 
 
-router.get('/:protein_id/ortholog_groups/get_lowest_level', (req, res) => {
+router.get('/:protein_id/ortholog_groups/get_lowest_level/:tissue', (req, res) => {
     
-    req.app.get('db').findLowestLevel(req.proteinId, req.speciesId)
+    req.app.get('db').findLowestLevel(req.proteinId, req.speciesId, req.tissue)
     .then(
         (result) => {
             // console.log(results);
@@ -172,7 +172,7 @@ router.get('/:protein_id/ortholog_groups/:taxonomic_level/list_orthologs', (req,
 
 router.get('/:protein_id/ortholog_groups/:taxonomic_level/:tissue', (req, res) => {
 
-    req.app.get('db').loadAbundances(req.proteinId, req.tissue, req.taxonomicLevel)
+    req.app.get('db').loadAbundancesNew(req.proteinId, req.tissue, req.taxonomicLevel)
     .then(
         (results) => {
             const familytree = req.app.get('db').loadProteinFamilyTree(results.map(result => result.proteinId), req.taxonomicLevel);
