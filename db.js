@@ -286,7 +286,7 @@ class Neo4j_engine {
         const session = this.driver.session();
         const result = await session.run(query, {taxonLevel: taxonLevel});
         const tissues = result.records.map(record => record.get(0));
-        session.close();
+        await session.close();
         return tissues;
     }
     
@@ -305,47 +305,51 @@ class Neo4j_engine {
             proteinId: node.properties.eid,
             name: node.properties.name,
         }));
-        session.close();
+        await session.close();
         return members;
     }
     
-    async findLowestLevel(proteinID, currentLevelID) {
-        const tissue = "WHOLE_ORGANISM";
+    async findLowestLevel(proteinID, currentLevelID, tissue) {
         // console.log(currentLevelID)
         // console.log(this.taxonomyMap[currentLevelID])
-        currentLevelID = this.taxonomyMap[currentLevelID].parent;
         const query = `MATCH (n1:Protein {eid:$proteinID}) --> (n2: NOG) <--(n3:Protein)-->(n4:Dataset) 
-                        WHERE n4.organ = $tissue return distinct n3`
+                        WHERE n4.organ = $tissue and n2.levelId = $level return distinct n3`
         const session = this.driver.session();
         let finished = false
         
         const testLevel = async () => {
-            const result = await session.run(query, {
-                proteinID: proteinID,
-                tissue: tissue
-            });
-            const orthologs = result.records.map(record => record.get(0));
-            
             if ("parent" in this.taxonomyMap[currentLevelID]){
                 currentLevelID = this.taxonomyMap[currentLevelID].parent;
             }
             else {
                 finished = true;
-                console.log('finished', currentLevelID)
+                // console.log('finished', currentLevelID)
             }
+
+            const result = await session.run(query, {
+                proteinID: proteinID,
+                tissue: tissue,
+                level: parseInt(currentLevelID)
+            });
+            const orthologs = result.records.map(record => record.get(0));
+            
             return orthologs;
         }
 
         let orthologs = await testLevel();
-        while (orthologs.length < 2 && !finished) {
-            try {
-                orthologs = await testLevel()
-            } catch (err) {
-                console.error(err)
+        while ( orthologs.length == 0 ) {
+            if (!finished) {
+                try {
+                    orthologs = await testLevel()
+                } catch (err) {
+                    console.error(err)
+                }
+            } else {
+                return 'NoLevelFound';
             }
-           
         }
-        session.close();
+        await session.close();
+        console.log(proteinID,currentLevelID)
         return this.taxonomicIDName[currentLevelID];
     }
 
@@ -353,9 +357,9 @@ class Neo4j_engine {
         const members = await this.loadOrthologs(proteinID, taxonLevel);
         const session = this.driver.session();
         let abundances = [];
-        // console.log(members.length);
-        for (let member of members){
-            const protein_eid = member.proteinId;
+        let orthologIds = members.map( member => String(member.proteinId) )
+        orthologIds.push(proteinID);
+        for (let protein_eid of orthologIds){
             // const protein_iid = member.stringdbInternalId;
             const protein_name = member.name;
             
@@ -408,7 +412,7 @@ class Neo4j_engine {
                         iid: dataset.iid,
                     }})
         }
-        session.close();
+        await session.close();
         return abundances;
     }
 
@@ -487,7 +491,7 @@ class Neo4j_engine {
                         }})
             }
         }
-        session.close();
+        await session.close();
         return abundances;
     }
 
@@ -580,10 +584,12 @@ module.exports = (NEO4J_URL, NEO4J_USER, NEO4J_PASS) => {
     // backend.loadAbundancesNew('7227.FBpp0289675','WHOLE_ORGANISM','LUCA') //8030.ENSSSAP00000048102
     //     .then((res) => {console.log(res.length);console.timeEnd(test_label2)})//console.log('new',res.length, res[0]);
         
+
     let test_label3 = "find lowest level"
     console.time(test_label3);
-    backend.findLowestLevel('9598.ENSPTRP00000007822', '9443')
-        .then((res) => {console.log(res.length);console.timeEnd(test_label3)})
+    const eid = '9598.ENSPTRP00000007822';
+    backend.findLowestLevel(eid, eid.split('.')[0], 'WHOLE_ORGANISM')
+        .then(() => {console.timeEnd(test_label3)})
         .catch((err) => console.error(err))
 
     return backend

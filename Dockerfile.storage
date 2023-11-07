@@ -1,0 +1,5 @@
+FROM        neo4j:5.7
+LABEL       maintainer="qingyao.huang@uzh.ch"
+
+ENV NEO4J_server_memory_pagecache_size 1G
+ENV NEO4J_server_memory_heap_max__size   2G
